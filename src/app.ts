@@ -4,14 +4,34 @@ import cors from "cors";
 import { router } from "./app/routes";
 import { globalErrorHandler } from "./app/middlewares/globalErrorHandler";
 import notFound from "./app/middlewares/notFound";
+import cookieParser from "cookie-parser";
+import passport from "passport";
+import expressSession from "express-session";
+import "./app/config/passport";
+import { envVars } from "./app/config/env";
 
 const app = express();
 
-// CORS configuration
-app.use(cors());
+app.use(
+  expressSession({
+    secret: envVars.EXPRESS_SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+// passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Cookie-parser
+app.use(cookieParser());
 
 // Body parsing middleware
 app.use(express.json());
+
+// CORS configuration
+app.use(cors());
 
 // API routes
 app.use("/api/v1", router);

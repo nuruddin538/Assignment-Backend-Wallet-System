@@ -1,9 +1,10 @@
 import { Types } from "mongoose";
 
 export enum UserRole {
+  SUPER_ADMIN = "SUPER_ADMIN",
   ADMIN = "ADMIN",
-  AGENT = "AGENT",
   USER = "USER",
+  AGENT = "AGENT",
 }
 
 export enum IsActive {
@@ -38,10 +39,4 @@ export interface IUser {
   totalCommission?: number;
   createdAt?: Date;
   updatedAt?: Date;
-}
-
-export interface IAgent extends IUser {
-  approvalStatus: "pending" | "approved" | "rejected";
-  commissionRate: number;
-  totalCommission: number;
 }
