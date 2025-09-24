@@ -2,6 +2,7 @@ import { Response } from "express";
 
 interface TMeta {
   total: number;
+  totalCommission?: number;
 }
 
 interface TResponse<T> {

@@ -31,7 +31,13 @@ app.use(cookieParser());
 app.use(express.json());
 
 // CORS configuration
-app.use(cors());
+app.use(
+  cors({
+    origin:
+      process.env.NODE_ENV === "production" ? [""] : ["http://localhost:5000"],
+    credentials: true,
+  })
+);
 
 // API routes
 app.use("/api/v1", router);

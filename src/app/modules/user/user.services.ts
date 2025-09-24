@@ -37,6 +37,12 @@ const updateUser = async (
   payload: Partial<IUser>,
   decodedToken: JwtPayload
 ) => {
+  if (decodedToken.UserRole === "USER" || decodedToken.UserRole === "AGENT") {
+    if (userId !== decodedToken.userId) {
+      throw new AppError(401, "You are not authorized");
+    }
+  }
+
   const ifUserExist = await UserModel.findById(userId);
 
   if (!ifUserExist) {
@@ -45,12 +51,6 @@ const updateUser = async (
 
   if (ifUserExist.isDeleted || ifUserExist.isActive === IsActive.BLOCKED) {
     throw new AppError(httpStatus.FORBIDDEN, "This User can not be updated");
-  }
-
-  if (decodedToken.role === "USER" || decodedToken.role === "AGENT") {
-    if (userId !== decodedToken.userId) {
-      throw new AppError(401, "You are not authorized");
-    }
   }
 
   // ADMIN cannot modify a SUPER_ADMIN
@@ -112,8 +112,20 @@ const getAllUsers = async () => {
   };
 };
 
+const getSingleUser = async (id: string) => {
+  const user = await UserModel.findById(id).select("-password");
+  return user;
+};
+
+const getMe = async (userId: string) => {
+  const user = await UserModel.findById(userId).select("-password");
+  return user;
+};
+
 export const UserServices = {
   createUser,
   getAllUsers,
   updateUser,
+  getSingleUser,
+  getMe,
 };

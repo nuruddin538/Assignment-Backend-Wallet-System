@@ -1,8 +1,14 @@
 import { model, Schema } from "mongoose";
-import { IWallet, WalletStatus } from "./wallet.interface";
+import {
+  IWallet,
+  IWalletMethods,
+  WalletModel,
+  WalletStatus,
+} from "./wallet.interface";
 import bcrypt from "bcryptjs";
+import { generateWalletId } from "../../utils/helpers";
 
-const walletSchema = new Schema<IWallet>(
+const walletSchema = new Schema<IWallet, WalletModel, IWalletMethods>(
   {
     walletId: {
       type: String,
@@ -51,7 +57,7 @@ walletSchema.pre("save", async function (next) {
     next();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    next(error);
+    next(error as Error);
   }
 });
 
@@ -62,4 +68,4 @@ walletSchema.methods.comparePin = async function (
   return bcrypt.compare(candidatePin, this.pin);
 };
 
-export const Wallet = model<IWallet>("Wallet", walletSchema);
+export const Wallet = model<IWallet, WalletModel>("Wallet", walletSchema);
